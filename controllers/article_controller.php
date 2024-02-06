@@ -107,7 +107,10 @@
 		* Méthode qui permet d'ajouter / modifier un Article
 		*/
 		public function addedit(){
-			
+			$this->_arrData["strPage"] 	= "add_article";
+			$this->_arrData["strTitle"] = "Ajouter un article";
+			$this->_arrData["strDesc"] 	= "Page permettant d'ajouter un article";
+			$this->afficheTpl("article_addedit");		
 		}
 		
 		
