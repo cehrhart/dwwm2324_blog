@@ -130,6 +130,27 @@
 					// Si le type d'image est autorisé
 					if (in_array($_FILES['image']['type'], $this->_arrMimesType)){ 
 						$strSource 	= $_FILES['image']['tmp_name'];
+						$strImgName	= bin2hex(random_bytes(5)).".webp";
+						$strDest	= "uploads/".$strImgName;
+						/* Avec redimensionnement */
+						$percent 	= 0.5;
+						// Calcul des nouvelles dimensions
+						list($width, $height) = getimagesize($strSource);
+						$newwidth	= $width* $percent;
+						$newheight	= $height* $percent;
+						// Création des GdImage
+						$dest	= imagecreatetruecolor($newwidth, $newheight); // Image vide
+						$source = imagecreatefrompng($strSource); // Image importée
+						// Redimensionnement
+						imagecopyresized($dest, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+						// Enregistrement du fichier
+						if (imagewebp($dest, $strDest, IMG_WEBP_LOSSLESS)){
+							$objArticle->setImg($strImgName);
+						}else{
+							$arrErrors['img'] = "Erreur lors de l'enregistrement de l'image";
+						}
+						
+						/* sans redimensionnement
 						switch ($_FILES['image']['type']){
 							case "image/jpeg": 
 								$strImgName	= bin2hex(random_bytes(5)).".jpg"; // texte aléatoire
@@ -144,7 +165,7 @@
 							$objArticle->setImg($strImgName);
 						}else{
 							$arrErrors['img'] = "Erreur lors de l'enregistrement de l'image";
-						}
+						}*/
 					}else{
 						$arrErrors['img'] = "Le type d'image n'est pas autorisé";
 					}
