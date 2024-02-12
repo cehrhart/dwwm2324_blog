@@ -111,24 +111,54 @@
 			var_dump($_POST);
 			var_dump($_FILES);
 			
-			/* 3. Créer un objet article */
+			$arrErrors = array();
 			$objArticle = new Article();	// instancie un objet Article
-			$objArticle->hydrate($_POST);	// hydrate (setters) avec les données du formulaire
+			if (count($_POST) > 0 && count($_FILES) > 0){
+				/* 3. Créer un objet article */
+				$objArticle->hydrate($_POST);	// hydrate (setters) avec les données du formulaire
+				
+				if ($objArticle->getTitle() == ""){
+					$arrErrors['title'] = "Le titre est obligatoire";
+				}
+				if (strlen($objArticle->getTitle()) < 10){
+					$arrErrors['title'] = "Le titre doit faire au minimum 10 caractères";
+				}
+				if ($objArticle->getContent() == ""){
+					$arrErrors['content'] = "Le contenu est obligatoire";
+				}
+				
+				/* 4. Enregistrer l'image */
+				$strImgName	= $_FILES['image']['name'];
+				if ($strImgName != ""){
+					if (in_array($_FILES['image']['type'], $this->_arrMimesType)){
+						$strSource 	= $_FILES['image']['tmp_name'];
+						$strDest	= "uploads/".$strImgName;
+						if (move_uploaded_file($strSource, $strDest)){
+							$objArticle->setImg($strImgName);
+						}else{
+							$arrErrors['img'] = "Erreur lors de l'enregistrement de l'image";
+						}
+					}else{
+						$arrErrors['img'] = "Le type d'image n'est pas autorisé";
+					}
+				}else{
+					$arrErrors['img'] = "L'image est obligatoire";
+				}
+				/* 5. Enregistrer l'objet en BDD */
+				if (count($arrErrors) == 0){
+					$objArticleModel	= new ArticleModel;
+					$objArticleModel->insert($objArticle);
+				}
+			}else{
+				$objArticle->setTitle("");
+				$objArticle->setContent("");
+			}
+			$this->_arrData["objArticle"] 	= $objArticle;
 			
-			/* 4. Enregistrer l'image */
-			$strSource 	= $_FILES['image']['tmp_name'];
-			$strImgName	= $_FILES['image']['name'];
-			$strDest	= "uploads/".$strImgName;
-			move_uploaded_file($strSource, $strDest);
-			$objArticle->setImg($strImgName);
-			
-			/* 5. Enregistrer l'objet en BDD */
-			$objArticleModel	= new ArticleModel;
-			$objArticleModel->insert($objArticle);
-			
-			$this->_arrData["strPage"] 	= "add_article";
-			$this->_arrData["strTitle"] = "Ajouter un article";
-			$this->_arrData["strDesc"] 	= "Page permettant d'ajouter un article";
+			$this->_arrData["strPage"] 		= "add_article";
+			$this->_arrData["strTitle"] 	= "Ajouter un article";
+			$this->_arrData["strDesc"] 		= "Page permettant d'ajouter un article";
+			$this->_arrData["arrErrors"] 	= $arrErrors;
 			/* 1. Afficher le formulaire */
 			$this->afficheTpl("article_addedit");		
 		}

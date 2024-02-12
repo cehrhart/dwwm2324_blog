@@ -35,7 +35,7 @@
 			return $this->_title;
 		}
 		public function setTitle(string $strTitle){ 
-			$this->_title = $strTitle;
+			$this->_title = trim($strTitle);
 		}
 		
 		// getter et setter de img
@@ -51,7 +51,7 @@
 			return $this->_content;
 		}
 		public function setContent(string $strContent){ 
-			$this->_content = $strContent;
+			$this->_content = trim($strContent);
 		}		
 		public function getContentSummary(int $max){
 			$strContent		= $this->_content;

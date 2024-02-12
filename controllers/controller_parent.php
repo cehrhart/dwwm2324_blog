@@ -6,6 +6,7 @@
 	class Ctrl{
 		// Tableau des données à utiliser dans le template
 		protected array $_arrData = array(); 
+		protected array $_arrMimesType = array("image/jpeg", "image/png");
 		
 		/**
 		* Méthode d'affichage des templates
