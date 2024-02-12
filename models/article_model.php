@@ -121,4 +121,23 @@
 
 			return $this->_db->query($strQuery)->fetchAll();
 		}	*/	
+	
+		/**
+		* Méthode permettant d'ajouter un article en BDD 
+		* @param $objArticle object Objet Article à insérer
+		*/
+		public function insert(object $objArticle){
+			$strQuery	= "	INSERT INTO articles (
+									article_title, article_img, article_content, 
+									article_createdate, article_creator)
+							VALUES (:titre, :image, :contenu, NOW(), 1);
+							";
+			// On prépare la requête
+			$rqPrep	= $this->_db->prepare($strQuery);
+			$rqPrep->bindValue(":titre", $objArticle->getTitle(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":image", $objArticle->getImg(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":contenu", $objArticle->getContent(), PDO::PARAM_STR);
+			
+			$rqPrep->execute();
+		}
 	}

@@ -107,9 +107,29 @@
 		* Méthode qui permet d'ajouter / modifier un Article
 		*/
 		public function addedit(){
+			/* 2. Récupérer les informations du formulaire */
+			var_dump($_POST);
+			var_dump($_FILES);
+			
+			/* 3. Créer un objet article */
+			$objArticle = new Article();	// instancie un objet Article
+			$objArticle->hydrate($_POST);	// hydrate (setters) avec les données du formulaire
+			
+			/* 4. Enregistrer l'image */
+			$strSource 	= $_FILES['image']['tmp_name'];
+			$strImgName	= $_FILES['image']['name'];
+			$strDest	= "uploads/".$strImgName;
+			move_uploaded_file($strSource, $strDest);
+			$objArticle->setImg($strImgName);
+			
+			/* 5. Enregistrer l'objet en BDD */
+			$objArticleModel	= new ArticleModel;
+			$objArticleModel->insert($objArticle);
+			
 			$this->_arrData["strPage"] 	= "add_article";
 			$this->_arrData["strTitle"] = "Ajouter un article";
 			$this->_arrData["strDesc"] 	= "Page permettant d'ajouter un article";
+			/* 1. Afficher le formulaire */
 			$this->afficheTpl("article_addedit");		
 		}
 		
