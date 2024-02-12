@@ -108,9 +108,6 @@
 		*/
 		public function addedit(){
 			/* 2. Récupérer les informations du formulaire */
-			var_dump($_POST);
-			var_dump($_FILES);
-			
 			$arrErrors = array();
 			$objArticle = new Article();	// instancie un objet Article
 			if (count($_POST) > 0 && count($_FILES) > 0){
@@ -130,9 +127,19 @@
 				/* 4. Enregistrer l'image */
 				$strImgName	= $_FILES['image']['name'];
 				if ($strImgName != ""){
-					if (in_array($_FILES['image']['type'], $this->_arrMimesType)){
+					// Si le type d'image est autorisé
+					if (in_array($_FILES['image']['type'], $this->_arrMimesType)){ 
 						$strSource 	= $_FILES['image']['tmp_name'];
+						switch ($_FILES['image']['type']){
+							case "image/jpeg": 
+								$strImgName	= bin2hex(random_bytes(5)).".jpg"; // texte aléatoire
+								break;
+							case "image/png": 
+								$strImgName	= bin2hex(random_bytes(5)).".png"; // texte aléatoire
+								break;
+						}
 						$strDest	= "uploads/".$strImgName;
+						// Si la copie de l'image s'est bien passée
 						if (move_uploaded_file($strSource, $strDest)){
 							$objArticle->setImg($strImgName);
 						}else{
@@ -147,7 +154,11 @@
 				/* 5. Enregistrer l'objet en BDD */
 				if (count($arrErrors) == 0){
 					$objArticleModel	= new ArticleModel;
-					$objArticleModel->insert($objArticle);
+					if ($objArticleModel->insert($objArticle)){
+						header("Location:index.php?ctrl=article&action=blog");
+					}else{
+						$arrErrors[] = "L'insertion s'est mal passée";
+					}
 				}
 			}else{
 				$objArticle->setTitle("");

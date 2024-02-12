@@ -14,7 +14,7 @@
 		<div class="col-auto d-none d-lg-block">
 			<img class="bd-placeholder-img" width="200" height="250" 
 				alt="{$objArticle->getTitle()}" 
-				src="assets/images/{$objArticle->getImg()}">
+				src="uploads/{$objArticle->getImg()}">
 		</div>
 	</div>
 </article>

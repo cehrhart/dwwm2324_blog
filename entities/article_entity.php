@@ -51,7 +51,8 @@
 			return $this->_content;
 		}
 		public function setContent(string $strContent){ 
-			$this->_content = trim($strContent);
+			$this->_content = trim($strContent); // Enlève les espaces avant et après
+			$this->_content = filter_var($this->_content, FILTER_SANITIZE_FULL_SPECIAL_CHARS); // nettoyage
 		}		
 		public function getContentSummary(int $max){
 			$strContent		= $this->_content;
