@@ -2,6 +2,7 @@
 <html lang="fr" data-bs-theme="auto">
 	<head>
 		<meta charset="utf-8">
+		<base href="http://localhost/blog/" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="Exercice de blog">
 		<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
@@ -33,12 +34,17 @@
 						<a class="blog-header-logo text-body-emphasis text-decoration-none" href="#">Mon blog</a>
 					</div>
 					<div id="user" class="col-4 d-flex justify-content-end align-items-center">
-						<a class="btn btn-sm" href="index.php?ctrl=user&action=create_account" title="Créer un compte">
+						<a class="btn btn-sm" href="user/create_account" title="Créer un compte">
 							<i class="fas fa-user"></i>
 						</a>
 						| 
-						<a class="btn btn-sm" href="index.php?ctrl=user&action=login" title="Se connecter">
+						<!-- Si non connecté -->
+						<a class="btn btn-sm" href="user/login" title="Se connecter">
 							<i class="fas fa-sign-in-alt"></i>
+						</a> 
+						<!-- Si connecté -->
+						<a class="btn btn-sm" href="user/logout" title="Se déconnecter">
+							<i class="fas fa-sign-out-alt"></i>
 						</a> 
 					</div>
 				</div>

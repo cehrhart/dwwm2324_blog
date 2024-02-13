@@ -8,7 +8,7 @@
 		{/foreach}
 		</div>
 	{/if}	
-	<form action="index.php?action=addedit&ctrl=article" method="post" enctype="multipart/form-data" >
+	<form action="article/addedit" method="post" enctype="multipart/form-data" >
 		<p>
 			<label for="titre">Titre de l'article</label>
 			<input id="titre" type="text" name="title" value="{$objArticle->getTitle()}" />
