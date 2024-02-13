@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# réécriture url de type MVC
+RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteCond %{REQUEST_FILENAME} !-f 
+ 
+RewriteRule ^(.+)/(.+)$ index.php?ctrl=$1&action=$2 [QSA,L]
+# article/blog devient index.php?ctrl=article&action=blog
