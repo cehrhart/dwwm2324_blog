@@ -1,4 +1,7 @@
 <?php
+	// On va utiliser la session
+	session_start(); 
+	
 	include("controllers/controller_parent.php");
 	
 	/**** Dispatcher ****/
