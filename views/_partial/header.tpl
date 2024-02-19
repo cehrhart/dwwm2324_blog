@@ -34,6 +34,17 @@
 						<a class="blog-header-logo text-body-emphasis text-decoration-none" href="#">Mon blog</a>
 					</div>
 					<div id="user" class="col-4 d-flex justify-content-end align-items-center">
+						{if isset($user.user_id) && $user.user_id != ''}
+						{*if isset($smarty.session.user.user_id)*}
+						<a class="btn btn-sm" href="user/edit_profile" title="Modifier mon compte">
+							<i class="fas fa-user"></i> Voir le profil
+						</a>
+						| 
+						<!-- Si connecté -->
+						<a class="btn btn-sm" href="user/logout" title="Se déconnecter">
+							<i class="fas fa-sign-out-alt"></i>
+						</a> 
+						{else}
 						<a class="btn btn-sm" href="user/create_account" title="Créer un compte">
 							<i class="fas fa-user"></i>
 						</a>
@@ -42,10 +53,7 @@
 						<a class="btn btn-sm" href="user/login" title="Se connecter">
 							<i class="fas fa-sign-in-alt"></i>
 						</a> 
-						<!-- Si connecté -->
-						<a class="btn btn-sm" href="user/logout" title="Se déconnecter">
-							<i class="fas fa-sign-out-alt"></i>
-						</a> 
+						{/if}
 					</div>
 				</div>
 			</header>

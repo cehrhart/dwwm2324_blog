@@ -137,7 +137,9 @@
 			$rqPrep->bindValue(":titre", $objArticle->getTitle(), PDO::PARAM_STR);
 			$rqPrep->bindValue(":image", $objArticle->getImg(), PDO::PARAM_STR);
 			$rqPrep->bindValue(":contenu", $objArticle->getContent(), PDO::PARAM_STR);
+						
 			
+			//var_dump($this->_db->lastInsertId());die;
 			return $rqPrep->execute();
 		}
 	}

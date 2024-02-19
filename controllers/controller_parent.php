@@ -19,6 +19,9 @@
 			foreach($this->_arrData as $key=>$value){
 				$smarty->assign($key, $value);
 			}
+			// L'utilisateur en session
+			$smarty->assign("user", $_SESSION['user']??array());
+			
 			$smarty->display("views/".$strTpl.".tpl");
 		}
 		
