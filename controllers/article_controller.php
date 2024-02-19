@@ -136,8 +136,8 @@
 						$percent 	= 0.5;
 						// Calcul des nouvelles dimensions
 						list($width, $height) = getimagesize($strSource);
-						$newwidth	= $width* $percent;
-						$newheight	= $height* $percent;
+						$newwidth	= intval($width* $percent);
+						$newheight	= intval($height* $percent);
 						// Création des GdImage
 						$dest	= imagecreatetruecolor($newwidth, $newheight); // Image vide
 						$source = imagecreatefrompng($strSource); // Image importée
