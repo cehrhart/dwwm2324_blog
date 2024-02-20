@@ -18,7 +18,9 @@
 			if (count($_POST) > 0){
 				$objUser->hydrate($_POST);
 				// Vérification des données de l'utilisateur
-				if ($objUser->getName() == ""){
+				$arrErrors = $this->_verifInfos($objUser);
+				
+				/*if ($objUser->getName() == ""){
 					$arrErrors['name'] = "Le nom est obligatoire";
 				}elseif (strlen($objUser->getName()) < 2){
 					$arrErrors['name'] = "Le nom est trop court";
@@ -39,9 +41,11 @@
 					if ($boolMailExists === true){
 						$arrErrors['mail'] = "Le mail est déjà utilisé";
 					}
-				}
+				}*/
 				// Vérifications du mot de passe
-				$password_regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{16,}$/"; 
+				$arrErrors = $this->_verifPwd($objUser->getPwd());
+
+				/*$password_regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{16,}$/"; 
 				
 				if ($objUser->getPwd() == ""){
 					$arrErrors['pwd'] = "Le mot de passe est obligatoire";
@@ -50,7 +54,7 @@
 										et contenir une minuscule, une majuscule, un chiffre et un caractère";
 				}elseif ($objUser->getPwd() != $_POST['passwd_confirm']){
 					$arrErrors['pwd'] = "Le mot de passe et sa confirmation doivent être identiques";
-				}
+				}*/
 				
 				if(count($arrErrors) == 0){
 					//$objUser->setPwd(password_hash($objUser->getPwd(), PASSWORD_DEFAULT));
@@ -119,17 +123,39 @@
 		* Méthode permettant de modifier son profil
 		*/
 		public function edit_profile(){
+			// Est-ce que l'utilisateur est connecté ?
+			if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['user_id'] == ''){
+				header('Location:http://localhost/blog/error/show403');
+			}
+			
 			$arrErrors	= array();
-			$objUser = new User;
+			$objUser 	= new User;
 			// Objet à partir de la BDD - à l'affichage du formulaire
 			$objUserModel	= new UserModel;
 			$arrUser		= $objUserModel->get($_SESSION['user']['user_id']);
 			$objUser->hydrate($arrUser);
+			
+			// Récupère les valeurs actuelles pour vérification
+			$strActualMail 	= $objUser->getMail();			
+			$strOldPwd 		= $objUser->getPwd();			
+			
 			// Objet à partir du formulaire - à l'envoi du formulaire
 			if (count($_POST) > 0){
-				$objUser->hydrate($_POST);	
+				// Mettre à jour l'objet
+				$objUser->hydrate($_POST);
+
 				// Vérifier 
-				
+				$boolVerifMail = ($strActualMail != $objUser->getMail());
+				$arrErrors = $this->_verifInfos($objUser, $boolVerifMail);
+
+				if ($objUser->getPwd() != ''){
+					if (password_verify($_POST['oldpwd'], $strOldPwd)){
+						$arrErrors = $this->_verifPwd($objUser->getPwd());
+					}else{
+						$arrErrors['pwd']	= "Erreur de mdp";
+					}
+				}
+
 				// Mise à jour en BDD
 				if(count($arrErrors) == 0){
 					if ($objUserModel->update($objUser)){
@@ -141,7 +167,6 @@
 				
 			}
 			
-			var_dump($objUser);
 			// Afficher
 			$this->_arrData["strPage"] 		= "edit_profile";
 			$this->_arrData["strTitle"] 	= "Modifier mon compte";
@@ -149,6 +174,59 @@
 			$this->_arrData["arrErrors"] 	= $arrErrors;
 			$this->_arrData["objUser"]	= $objUser;
 			$this->afficheTpl("edit_profile");
+		}
+		
+		
+		/**
+		* Méthode privée de vérification des informations de l'utilisateur
+		* @param object $objUser Objet à vérifier
+		* @return array les erreurs générées
+		*/
+		private function _verifInfos(object $objUser, $boolVerifMail = true){
+			$arrErrors = array();
+			if ($objUser->getName() == ""){
+				$arrErrors['name'] = "Le nom est obligatoire";
+			}elseif (strlen($objUser->getName()) < 2){
+				$arrErrors['name'] = "Le nom est trop court";
+			}
 			
+			if ($objUser->getFirstname() == ""){
+				$arrErrors['firstname'] = "Le prénom est obligatoire";
+			}
+			
+			if ($objUser->getMail() == ""){
+				$arrErrors['mail'] = "Le mail est obligatoire";
+			}elseif (!filter_var($objUser->getMail(), FILTER_VALIDATE_EMAIL)) {
+				$arrErrors['mail'] = "Le mail n'est pas correct";
+			}elseif ($boolVerifMail){
+				$objUserModel	= new UserModel;
+				// Test si le mail existe déjà
+				$boolMailExists	= $objUserModel->verifMail($objUser->getMail());
+				if ($boolMailExists === true){
+					$arrErrors['mail'] = "Le mail est déjà utilisé";
+				}
+			}
+			return $arrErrors;
+		}
+		
+		
+		/**
+		* Méthode privée de vérification du mot de passe de l'utilisateur
+		* @param string $strPassword Mot de passe à vérifier
+		* @return array les erreurs générées
+		*/
+		private function _verifPwd(string $strPassword){
+			$arrErrors	= array();
+			$password_regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{16,}$/"; 
+				
+			if ($strPassword == ""){
+				$arrErrors['pwd'] = "Le mot de passe est obligatoire";
+			}elseif(!preg_match($password_regex, $strPassword)){
+				$arrErrors['pwd'] = "Le mot de passe doit faire minimum 16 caractères 
+									et contenir une minuscule, une majuscule, un chiffre et un caractère";
+			}elseif ($strPassword != $_POST['passwd_confirm']){
+				$arrErrors['pwd'] = "Le mot de passe et sa confirmation doivent être identiques";
+			}
+			return $arrErrors;
 		}
 	}

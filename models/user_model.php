@@ -29,7 +29,7 @@
 		* @return Tableau de l'utilisateur
 		*/
 		public function get(int $id){
-			$strQuery 	= "SELECT user_id, user_firstname, user_name, user_mail
+			$strQuery 	= "SELECT user_id, user_firstname, user_name, user_mail, user_pwd
 							FROM users
 							WHERE user_id = ".$id;
 			return $this->_db->query($strQuery)->fetch();
@@ -38,7 +38,7 @@
 		/**
 		* Méthode de récupération d'un utilisateur en fonction de son mail et son pwd
 		* @param string $strEmail Adresse mail de l'utilisateur
-		* @param string $strPwd Mot de passe de l'utilisateur $#X!x7@JHtaY$oRB
+		* @param string $strPwd Mot de passe de l'utilisateur 	hky67?3gKpE?AGa$
 		* @return 
 		*/
 		public function searchUser(string $strEmail, string $strPwd){
@@ -98,6 +98,31 @@
 			$rqPrep->bindValue(":firstname", $objUser->getFirstname(), PDO::PARAM_STR);
 			$rqPrep->bindValue(":mail", $objUser->getMail(), PDO::PARAM_STR);
 			$rqPrep->bindValue(":pwd", $objUser->getPwdHash(), PDO::PARAM_STR);
+			return $rqPrep->execute();
+		}
+
+		/**
+		* Méthode de modification d'un utilisateur en bdd
+		* param object $objUser Objet utilisateur
+		*/
+		public function update(object $objUser){
+			$strQuery 	= "UPDATE users 
+							SET user_name = :name, 
+								user_firstname = :firstname, 
+								user_mail = :mail";
+			if ($objUser->getPwd() != ''){
+				$strQuery 	.= ", user_pwd = :pwd";
+			}
+			$strQuery 	.= " WHERE user_id = :id	;";
+			$rqPrep	= $this->_db->prepare($strQuery);
+			
+			$rqPrep->bindValue(":name", $objUser->getName(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":firstname", $objUser->getFirstname(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":mail", $objUser->getMail(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":id", $objUser->getId(), PDO::PARAM_INT);
+			if ($objUser->getPwd() != ''){
+				$rqPrep->bindValue(":pwd", $objUser->getPwdHash(), PDO::PARAM_STR);
+			}
 			return $rqPrep->execute();
 		}
 		
