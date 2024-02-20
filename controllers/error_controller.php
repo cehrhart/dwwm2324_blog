@@ -8,4 +8,8 @@
 			$this->afficheTpl("show404");
 		}
 		
+		public function show403(){
+			echo("erreur 403");
+		}
+		
 	}
