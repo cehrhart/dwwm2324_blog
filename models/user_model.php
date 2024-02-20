@@ -29,7 +29,7 @@
 		* @return Tableau de l'utilisateur
 		*/
 		public function get(int $id){
-			$strQuery 	= "SELECT user_firstname 
+			$strQuery 	= "SELECT user_id, user_firstname, user_name, user_mail
 							FROM users
 							WHERE user_id = ".$id;
 			return $this->_db->query($strQuery)->fetch();

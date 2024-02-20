@@ -114,4 +114,41 @@
 			session_destroy();
 			header("Location:http://localhost/blog/index.php");
 		}
+	
+		/**
+		* Méthode permettant de modifier son profil
+		*/
+		public function edit_profile(){
+			$arrErrors	= array();
+			$objUser = new User;
+			// Objet à partir de la BDD - à l'affichage du formulaire
+			$objUserModel	= new UserModel;
+			$arrUser		= $objUserModel->get($_SESSION['user']['user_id']);
+			$objUser->hydrate($arrUser);
+			// Objet à partir du formulaire - à l'envoi du formulaire
+			if (count($_POST) > 0){
+				$objUser->hydrate($_POST);	
+				// Vérifier 
+				
+				// Mise à jour en BDD
+				if(count($arrErrors) == 0){
+					if ($objUserModel->update($objUser)){
+						header("Location:index.php?ctrl=article&action=home");
+					}else{
+						$arrErrors[] = "L'insertion s'est mal passée";
+					}
+				}
+				
+			}
+			
+			var_dump($objUser);
+			// Afficher
+			$this->_arrData["strPage"] 		= "edit_profile";
+			$this->_arrData["strTitle"] 	= "Modifier mon compte";
+			$this->_arrData["strDesc"] 		= "Page permettant de modifier mon compte";
+			$this->_arrData["arrErrors"] 	= $arrErrors;
+			$this->_arrData["objUser"]	= $objUser;
+			$this->afficheTpl("edit_profile");
+			
+		}
 	}
