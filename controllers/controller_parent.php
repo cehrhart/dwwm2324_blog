@@ -8,6 +8,10 @@
 		protected array $_arrData = array(); 
 		protected array $_arrMimesType = array("image/jpeg", "image/png");
 		
+		public function __construct(){
+			var_dump($_GET, $_SESSION);
+		}
+		
 		/**
 		* Méthode d'affichage des templates
 		* @param $strTpl Nom du template à afficher
