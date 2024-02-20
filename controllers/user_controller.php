@@ -203,7 +203,6 @@
 				$objUserModel	= new UserModel;
 				// Test si le mail existe déjà
 				$boolMailExists	= $objUserModel->verifMail($objUser->getMail());
-				var_dump($boolMailExists);
 				
 				if ($boolMailExists === true){
 					$arrErrors['mail'] = "Le mail est déjà utilisé";
