@@ -46,7 +46,7 @@
 							FROM users
 							WHERE user_mail = :mail
 								AND user_pwd = :pwd ;";*/
-			$strQuery 	= "SELECT user_id, user_firstname, user_name, user_pwd
+			$strQuery 	= "SELECT user_id, user_firstname, user_name, user_pwd, user_role
 							FROM users
 							WHERE user_mail = :mail;";
 							

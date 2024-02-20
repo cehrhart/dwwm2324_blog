@@ -8,8 +8,18 @@
 		protected array $_arrData = array(); 
 		protected array $_arrMimesType = array("image/jpeg", "image/png");
 		
+		// Tableau de sécurisation des pages => uniquement pour l'admin
+		protected array $_arrAdminPages = array("page/about", "page/mentions");
+		
 		public function __construct(){
-			var_dump($_GET, $_SESSION);
+			// Pages admin uniquement
+			if (count($_GET) > 0){
+				$strPage	= $_GET['ctrl'].'/'.$_GET['action'];
+				
+				if (in_array($strPage, $this->_arrAdminPages) && $_SESSION['user']['user_role'] != "admin"){
+					header("Location:http://localhost/blog/error/show403");
+				}
+			}
 		}
 		
 		/**
