@@ -35,7 +35,7 @@
 				}elseif (!filter_var($objUser->getMail(), FILTER_VALIDATE_EMAIL)) {
 					$arrErrors['mail'] = "Le mail n'est pas correct";
 				}else{
-					$objUserModel	= new UserModel;
+
 					// Test si le mail existe déjà
 					$boolMailExists	= $objUserModel->verifMail($objUser->getMail());
 					if ($boolMailExists === true){
@@ -43,7 +43,7 @@
 					}
 				}*/
 				// Vérifications du mot de passe
-				$arrErrors = $this->_verifPwd($objUser->getPwd());
+				$arrErrors = array_merge($arrErrors, $this->_verifPwd($objUser->getPwd()));
 
 				/*$password_regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{16,}$/"; 
 				
@@ -58,6 +58,7 @@
 				
 				if(count($arrErrors) == 0){
 					//$objUser->setPwd(password_hash($objUser->getPwd(), PASSWORD_DEFAULT));
+					$objUserModel	= new UserModel;
 					if ($objUserModel->insert($objUser)){
 						header("Location:index.php?ctrl=article&action=home");
 					}else{
@@ -150,7 +151,7 @@
 
 				if ($objUser->getPwd() != ''){
 					if (password_verify($_POST['oldpwd'], $strOldPwd)){
-						$arrErrors = $this->_verifPwd($objUser->getPwd());
+						$arrErrors = array_merge($arrErrors, $this->_verifPwd($objUser->getPwd()));
 					}else{
 						$arrErrors['pwd']	= "Erreur de mdp";
 					}
@@ -202,6 +203,8 @@
 				$objUserModel	= new UserModel;
 				// Test si le mail existe déjà
 				$boolMailExists	= $objUserModel->verifMail($objUser->getMail());
+				var_dump($boolMailExists);
+				
 				if ($boolMailExists === true){
 					$arrErrors['mail'] = "Le mail est déjà utilisé";
 				}
