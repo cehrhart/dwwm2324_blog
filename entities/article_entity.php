@@ -14,7 +14,8 @@
 		private string $_img;
 		private string $_content;
 		private string $_createdate;
-		private string $_creator;		
+		private string $_creator;	
+		private int $_creator_id;
 		
 		// ################### Méthodes ######################## //
 	
@@ -82,5 +83,12 @@
 			$this->_creator = $strCreator;
 		}		
 		
+		// getter et setter de creator
+		public function getCreator_id():int{ 
+			return $this->_creator_id;
+		}
+		public function setCreator_id(int $intCreatorId){ 
+			$this->_creator_id = $intCreatorId;
+		}		
 		
 	}

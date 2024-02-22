@@ -12,6 +12,9 @@
 
 {block name="contenu"}
 <div class="row mb-2">
+	{if isset($user.user_id) && $user.user_id != ''}
+	<a href="article/addedit" alt="Ajouter un article">Ajouter un article</a>
+	{/if}
 	<form name="formSearch" method="post" action="#">
 		<fieldset>
 			<legend>Rechercher des articles</legend>

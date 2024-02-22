@@ -10,8 +10,8 @@
 	
 		public function findAll(int $intLimit = 0, $arrSearch = array()){
 		
-			$strQuery 	= "	SELECT article_title, article_img, article_content, article_createdate, 
-								user_firstname AS 'article_creator'
+			$strQuery 	= "	SELECT article_id, article_title, article_img, article_content, article_createdate, 
+								user_firstname AS 'article_creator', user_id AS 'article_creator_id'
 							FROM articles
 								INNER JOIN users ON article_creator = user_id";
 			
@@ -130,14 +130,14 @@
 			$strQuery	= "	INSERT INTO articles (
 									article_title, article_img, article_content, 
 									article_createdate, article_creator)
-							VALUES (:titre, :image, :contenu, NOW(), 1);
+							VALUES (:titre, :image, :contenu, NOW(), :user);
 							";
 			// On prépare la requête
 			$rqPrep	= $this->_db->prepare($strQuery);
 			$rqPrep->bindValue(":titre", $objArticle->getTitle(), PDO::PARAM_STR);
 			$rqPrep->bindValue(":image", $objArticle->getImg(), PDO::PARAM_STR);
 			$rqPrep->bindValue(":contenu", $objArticle->getContent(), PDO::PARAM_STR);
-						
+			$rqPrep->bindValue(":user", $_SESSION['user']['user_id'], PDO::PARAM_INT);
 			
 			//var_dump($this->_db->lastInsertId());die;
 			return $rqPrep->execute();
