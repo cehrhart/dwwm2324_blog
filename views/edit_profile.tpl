@@ -24,6 +24,10 @@
 				<label for="mail">Email</label>
 				<input type="email" name="mail" id="mail" value="{$objUser->getMail()}">
 			</p>
+			<p>
+				<label for="pseudo">Pseudo</label>
+				<input type="text" name="pseudo" id="pseudo" value="{if isset($smarty.cookies.pseudo)}{$smarty.cookies.pseudo}{/if}">
+			</p>
 		</fieldset>
 		<fieldset>
 			<legend>Informations de connexion</legend>

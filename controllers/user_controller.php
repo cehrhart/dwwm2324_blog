@@ -156,10 +156,26 @@
 						$arrErrors['pwd']	= "Erreur de mdp";
 					}
 				}
-
+			
 				// Mise à jour en BDD
 				if(count($arrErrors) == 0){
 					if ($objUserModel->update($objUser)){
+						// Traitement du pseudo en cookie
+						$strPseudo	= trim($_POST['pseudo']);
+						if($strPseudo != ''){
+							$strPseudo	= filter_var($strPseudo, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+							setcookie('pseudo', $strPseudo, $this->_arrCookieOptions);
+						}else{
+							setcookie('pseudo', '', array(	'expires'=>time()-1,
+															'path' 		=> '/', 
+															'domain' 	=> '', 
+													));
+						}
+
+						// Attention si informations de session modifiées => modifier la session
+						$_SESSION['user']['user_firstname'] = $objUser->getFirstname();
+						$_SESSION['user']['user_name'] 		= $objUser->getName();
+						
 						header("Location:index.php?ctrl=article&action=home");
 					}else{
 						$arrErrors[] = "L'insertion s'est mal passée";

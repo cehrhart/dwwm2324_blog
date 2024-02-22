@@ -37,7 +37,12 @@
 						{if isset($user.user_id) && $user.user_id != ''}
 						{*if isset($smarty.session.user.user_id)*}
 						<a class="btn btn-sm" href="user/edit_profile" title="Modifier mon compte">
-							<i class="fas fa-user"></i> Voir le profil
+							<i class="fas fa-user"></i> Bonjour
+							{if isset($smarty.cookies.pseudo)}
+								{$smarty.cookies.pseudo}
+							{else}
+								{$smarty.session.user.user_firstname}
+							{/if}
 						</a>
 						| 
 						<!-- Si connecté -->
