@@ -8,7 +8,7 @@
 		{/foreach}
 		</div>
 	{/if}	
-	<form action="article/addedit" method="post" enctype="multipart/form-data" >
+	<form action="article/addedit{if (isset($smarty.get.id) && $smarty.get.id != '' )}?id={$smarty.get.id}{/if}" method="post" enctype="multipart/form-data" >
 		<p>
 			<label for="titre">Titre de l'article</label>
 			<input id="titre" type="text" name="title" value="{$objArticle->getTitle()}" />
@@ -19,6 +19,9 @@
 		</p>
 		<p>
 			<label for="image">Image de l'article</label>
+			{if $objArticle->getImg() != ""}
+			<img src="uploads/{$objArticle->getImg()}">
+			{/if}
 			<input id="image" type="file" name="image" />
 		</p>
 		<p>

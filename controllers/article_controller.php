@@ -107,13 +107,30 @@
 		* Méthode qui permet d'ajouter / modifier un Article
 		*/
 		public function addedit(){
+			// Numéro de l'article à modifier
+			$intArticleId	= $_GET['id']??0;
+			
 			/* 2. Récupérer les informations du formulaire */
-			$arrErrors = array();
-			$objArticle = new Article();	// instancie un objet Article
+			$arrErrors 			= array();
+			$objArticle 		= new Article();	// instancie un objet Article
+			$objArticleModel	= new ArticleModel();// instancie le modèle Article
+			
+			/* Récupère l'article */
+			$arrArticle 	= $objArticleModel->get($intArticleId);
+			if ($arrArticle === false){
+				$objArticle->setId(0);
+				$objArticle->setTitle("");
+				$objArticle->setContent("");
+				$objArticle->setImg("");
+			}else{
+				/* j'hydrate en fonction de l'article */
+				$objArticle->hydrate($arrArticle);
+			}			
+			
 			if (count($_POST) > 0 && count($_FILES) > 0){
 				/* 3. Créer un objet article */
 				$objArticle->hydrate($_POST);	// hydrate (setters) avec les données du formulaire
-				
+				var_dump($objArticle);
 				if ($objArticle->getTitle() == ""){
 					$arrErrors['title'] = "Le titre est obligatoire";
 				}
@@ -140,7 +157,18 @@
 						$newheight	= intval($height* $percent);
 						// Création des GdImage
 						$dest	= imagecreatetruecolor($newwidth, $newheight); // Image vide
-						$source = imagecreatefrompng($strSource); // Image importée
+						switch ($_FILES['image']['type']){
+							case "image/jpeg":
+								$source = imagecreatefromjpeg($strSource); // Image importée
+								break;
+							case "image/png" :
+								$source = imagecreatefrompng($strSource); // Image importée
+								break;
+							default :
+								$source = imagecreatefromwebp($strSource); // Image importée
+								break;
+						}
+						
 						// Redimensionnement
 						imagecopyresized($dest, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 						// Enregistrement du fichier
@@ -169,27 +197,39 @@
 					}else{
 						$arrErrors['img'] = "Le type d'image n'est pas autorisé";
 					}
-				}else{
+				}elseif ($objArticle->getImg() =='') {
 					$arrErrors['img'] = "L'image est obligatoire";
 				}
 				/* 5. Enregistrer l'objet en BDD */
 				if (count($arrErrors) == 0){
-					$objArticleModel	= new ArticleModel;
-					if ($objArticleModel->insert($objArticle)){
-						header("Location:index.php?ctrl=article&action=blog");
+					if ($objArticle->getId() === 0){
+						if ($objArticleModel->insert($objArticle)){
+							header("Location:index.php?ctrl=article&action=blog");
+						}else{
+							$arrErrors[] = "L'insertion s'est mal passée";
+						}
 					}else{
-						$arrErrors[] = "L'insertion s'est mal passée";
+						if ($objArticleModel->update($objArticle)){
+							header("Location:index.php?ctrl=article&action=blog");
+						}else{
+							$arrErrors[] = "L'insertion s'est mal passée";
+						}
 					}
 				}
 			}else{
-				$objArticle->setTitle("");
-				$objArticle->setContent("");
+				
 			}
 			$this->_arrData["objArticle"] 	= $objArticle;
 			
-			$this->_arrData["strPage"] 		= "add_article";
-			$this->_arrData["strTitle"] 	= "Ajouter un article";
-			$this->_arrData["strDesc"] 		= "Page permettant d'ajouter un article";
+			if ($intArticleId === 0){
+				$this->_arrData["strPage"] 		= "add_article";
+				$this->_arrData["strTitle"] 	= "Ajouter un article";
+				$this->_arrData["strDesc"] 		= "Page permettant d'ajouter un article";
+			}else{
+				$this->_arrData["strPage"] 		= "edit_article";
+				$this->_arrData["strTitle"] 	= "Modifier un article";
+				$this->_arrData["strDesc"] 		= "Page permettant de modifier un article";
+			}
 			$this->_arrData["arrErrors"] 	= $arrErrors;
 			/* 1. Afficher le formulaire */
 			$this->afficheTpl("article_addedit");		

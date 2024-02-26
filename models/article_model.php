@@ -74,7 +74,9 @@
 			if ($intLimit > 0){
 				$rqPrep->bindValue(":limit", $intLimit, PDO::PARAM_INT);
 			}			
+
 			$rqPrep->execute();
+			//echo("<pre>");var_dump($rqPrep->debugDumpParams());
 			return $rqPrep->fetchAll();
 			//return $this->_db->query($strQuery)->fetchAll();
 		}
@@ -141,5 +143,38 @@
 			
 			//var_dump($this->_db->lastInsertId());die;
 			return $rqPrep->execute();
+		}
+
+		/**
+		* Méthode permettant de modifier un article en BDD 
+		* @param $objArticle object Objet Article à modifier
+		*/
+		public function update(object $objArticle){
+			$strQuery	= "	UPDATE articles 
+							SET article_title = :titre, 
+								article_img = :image, 
+								article_content = :contenu
+							WHERE article_id = :id";
+			// On prépare la requête
+			$rqPrep	= $this->_db->prepare($strQuery);
+			$rqPrep->bindValue(":titre", $objArticle->getTitle(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":image", $objArticle->getImg(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":contenu", $objArticle->getContent(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":id", $objArticle->getId(), PDO::PARAM_INT);
+			
+			//var_dump($this->_db->lastInsertId());die;
+			return $rqPrep->execute();
+		}
+		
+		/**
+		* Méthode permettant de récupérer un article en fonction de son id
+		* @param int $id Identifiant de l'article à récupérer
+		* @return array Le détail de l'Article
+		*/		
+		public function get(int $id) : array|false{
+			$strQuery 	= "SELECT *
+							FROM articles
+							WHERE article_id = ".$id;
+			return $this->_db->query($strQuery)->fetch();			
 		}
 	}
