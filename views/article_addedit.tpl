@@ -22,6 +22,7 @@
 			{if $objArticle->getImg() != ""}
 			<img src="uploads/{$objArticle->getImg()}">
 			{/if}
+			<!-- input id="image" type="file" name="image[]" multiple /-->
 			<input id="image" type="file" name="image" />
 		</p>
 		<p>

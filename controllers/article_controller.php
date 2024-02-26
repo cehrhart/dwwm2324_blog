@@ -107,6 +107,12 @@
 		* Méthode qui permet d'ajouter / modifier un Article
 		*/
 		public function addedit(){
+			
+			// si l'utilisateur est connecté
+			if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['user_id'] == ''){
+				header("Location:http://localhost/blog/error/show403");
+			}
+			
 			// Numéro de l'article à modifier
 			$intArticleId	= $_GET['id']??0;
 			
@@ -125,12 +131,24 @@
 			}else{
 				/* j'hydrate en fonction de l'article */
 				$objArticle->hydrate($arrArticle);
-			}			
+				if ($_SESSION['user']['user_role'] != "admin" && 
+					$_SESSION['user']['user_id'] != $objArticle->getCreator_id()){
+					header("Location:http://localhost/blog/error/show403");
+				}
+			}		
+			
+			// Tableau des fichiers si multiples
+			/* Pour le projet => traitement images multiples
+			$arrImagesDet = array();
+			foreach($_FILES['image'] as $key=>$arrImages){
+				foreach($arrImages as $num => $val){
+					$arrImagesDet[$num][$key] = $val;
+				}
+			}*/
 			
 			if (count($_POST) > 0 && count($_FILES) > 0){
 				/* 3. Créer un objet article */
 				$objArticle->hydrate($_POST);	// hydrate (setters) avec les données du formulaire
-				var_dump($objArticle);
 				if ($objArticle->getTitle() == ""){
 					$arrErrors['title'] = "Le titre est obligatoire";
 				}
@@ -142,6 +160,8 @@
 				}
 				
 				/* 4. Enregistrer l'image */
+				//$strImgName	= $_FILES['image']['name'];
+				
 				$strImgName	= $_FILES['image']['name'];
 				if ($strImgName != ""){
 					// Si le type d'image est autorisé
@@ -221,7 +241,7 @@
 			}
 			$this->_arrData["objArticle"] 	= $objArticle;
 			
-			if ($intArticleId === 0){
+			if ($objArticle->getId() === 0){
 				$this->_arrData["strPage"] 		= "add_article";
 				$this->_arrData["strTitle"] 	= "Ajouter un article";
 				$this->_arrData["strDesc"] 		= "Page permettant d'ajouter un article";

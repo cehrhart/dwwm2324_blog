@@ -172,7 +172,8 @@
 		* @return array Le détail de l'Article
 		*/		
 		public function get(int $id) : array|false{
-			$strQuery 	= "SELECT *
+			$strQuery 	= "SELECT article_id, article_title, article_img, article_content, 
+							article_creator AS 'article_creator_id'
 							FROM articles
 							WHERE article_id = ".$id;
 			return $this->_db->query($strQuery)->fetch();			
