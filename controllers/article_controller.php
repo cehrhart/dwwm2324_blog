@@ -255,5 +255,29 @@
 			$this->afficheTpl("article_addedit");		
 		}
 		
+		/** 
+		* Méthode permettant d'afficher le détail d'un article
+		*/
+		public function read(){
+			// Numéro de l'article à afficher
+			$intArticleId	= $_GET['id']??0;
+
+			/* Récupère l'article */
+			$objArticleModel	= new ArticleModel();// instancie le modèle Article
+			$arrArticle 		= $objArticleModel->get($intArticleId);
+
+			$objArticle 		= new Article();	// instancie un objet Article
+			$objArticle->hydrate($arrArticle);
+			$this->_arrData["objArticle"] 	= $objArticle;
+
+
+
+			$this->_arrData["strPage"] 	= "read";
+			$this->_arrData["strTitle"] = "Détail d'un article";
+			$this->_arrData["strDesc"] 	= "Page affichant le détail d'un article";
+
+			$this->afficheTpl("article_read");
+		}
+		
 		
 	}

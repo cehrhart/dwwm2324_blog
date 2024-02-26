@@ -48,6 +48,16 @@
 				$strWhere	= " AND ";
 			}
 
+			// Les articles validés // TODO revoir les droits
+			if (!isset($_SESSION['user']['user_id']) 
+				|| $_SESSION['user']['user_id'] == ""
+				&& ($_SESSION['user']['user_role'] != "modo" || $_SESSION['user']['user_role'] != "admin")
+				){
+				$strQuery 	.= $strWhere." article_valid = 1 ";
+				$strWhere	= " AND ";
+			}
+			
+			
 			// Tri par ordre décroissant
 			$strQuery 	.= " ORDER BY article_createdate DESC";
 			

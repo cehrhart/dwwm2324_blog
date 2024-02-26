@@ -14,7 +14,7 @@
 				( $user.user_role == 'admin' || $objArticle->getCreator_id() == $user.user_id ) }
 				<a href="article/addedit?id={$objArticle->getId()}" alt="Modifier l'article">Modifier l'article</a>
 			{/if}
-			<a href="#" class="icon-link gap-1 icon-link-hover">Lire la suite</a>
+			<a href="article/read?id={$objArticle->getId()}" class="icon-link gap-1 icon-link-hover">Lire la suite</a>
 		</div>
 		<div class="col-auto d-none d-lg-block">
 			<img class="bd-placeholder-img" width="200" height="250" 
