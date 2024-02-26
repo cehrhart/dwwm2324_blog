@@ -15,7 +15,7 @@
 	{if isset($user.user_id) && $user.user_id != ''}
 	<a href="article/addedit" alt="Ajouter un article">Ajouter un article</a>
 	{/if}
-	<form name="formSearch" method="post" action="#">
+	<form name="formSearch" method="post" action="article/blog">
 		<fieldset>
 			<legend>Rechercher des articles</legend>
 			<p><label for="keywords">Mots clés</label>
