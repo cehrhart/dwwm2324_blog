@@ -5,3 +5,6 @@ ALTER TABLE `users` ADD `user_role` ENUM('user','admin','modo','') NOT NULL DEFA
 
 Modération:
 ALTER TABLE `articles` ADD `article_valid` BOOLEAN NOT NULL DEFAULT FALSE AFTER `article_creator`, ADD `article_comment` TEXT NULL AFTER `article_valid`, ADD `article_modo` INT NULL AFTER `article_comment`;
+
+Mot de passe oublié :
+ALTER TABLE `users` ADD `user_recocode` VARCHAR(255) NULL AFTER `user_role`, ADD `user_recodate` DATETIME NULL AFTER `user_recocode`, ADD `user_recoexp` DATETIME NULL AFTER `user_recodate`, ADD UNIQUE (`user_recocode`);
