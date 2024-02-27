@@ -1,4 +1,11 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'libs/PHPMailer/Exception.php';
+require 'libs/PHPMailer/PHPMailer.php';
+require 'libs/PHPMailer/SMTP.php';
+
 	/** 
 	* Controller des utilisateurs
 	* @author Christel
@@ -60,7 +67,7 @@
 					//$objUser->setPwd(password_hash($objUser->getPwd(), PASSWORD_DEFAULT));
 					$objUserModel	= new UserModel;
 					if ($objUserModel->insert($objUser)){
-						header("Location:index.php?ctrl=article&action=home");
+						header("Location:".parent::BASE_URL."article/home");
 					}else{
 						$arrErrors[] = "L'insertion s'est mal passée";
 					}
@@ -117,7 +124,7 @@
 		*/
 		public function logout(){
 			session_destroy();
-			header("Location:http://localhost/blog/index.php");
+			header("Location:".parent::BASE_URL);
 		}
 	
 		/**
@@ -126,7 +133,7 @@
 		public function edit_profile(){
 			// Est-ce que l'utilisateur est connecté ?
 			if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['user_id'] == ''){
-				header('Location:http://localhost/blog/error/show403');
+				header('Location:".parent::BASE_URL."error/show403');
 			}
 			
 			$arrErrors	= array();
@@ -176,7 +183,7 @@
 						$_SESSION['user']['user_firstname'] = $objUser->getFirstname();
 						$_SESSION['user']['user_name'] 		= $objUser->getName();
 						
-						header("Location:index.php?ctrl=article&action=home");
+						header("Location:".parent::BASE_URL."article/home");
 					}else{
 						$arrErrors[] = "L'insertion s'est mal passée";
 					}
@@ -246,5 +253,36 @@
 				$arrErrors['pwd'] = "Le mot de passe et sa confirmation doivent être identiques";
 			}
 			return $arrErrors;
+		}
+		
+		public function forgetPwd(){
+			
+			// Envoyer
+			
+			$mail = new PHPMailer();
+			$mail->IsSMTP();
+			$mail->Mailer = "smtp";
+
+			$mail->SMTPDebug  	= 0;  
+			$mail->SMTPAuth   	= TRUE;
+			$mail->SMTPSecure 	= "tls";
+			$mail->Port       	= 587;
+			$mail->Host       	= "smtp.gmail.com";
+			$mail->Username 	= 'ceformation68@gmail.com';
+			$mail->Password 	= 'lkpy yuoc ftuu qksu';
+			$mail->CharSet		= PHPMailer::CHARSET_UTF8;
+			$mail->IsHTML(true);
+			$mail->setFrom('monadresse@gmail.com', ' é christel');
+			$mail->addAddress('christel.ehrhart@gmail.com', 'Nom du destinataire');
+			$mail->Subject = 'Essai de PHPMailer';
+			$mail->Body = $this->afficheTpl("mails/contact", false);
+			$mail->addAttachment('test.txt');
+
+			if (!$mail->send()) {
+				echo 'Erreur de Mailer : ' . $mail->ErrorInfo;
+			} else {
+				echo 'Le message a été envoyé.';
+			}
+
 		}
 	}
