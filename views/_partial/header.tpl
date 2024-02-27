@@ -44,7 +44,7 @@
 								{$smarty.session.user.user_firstname}
 							{/if}
 						</a>
-						| 
+						<a class="btn" href="article/manage" alt="Gérer les articles" ><i class="fa fa-newspaper"></i></a>
 						<!-- Si connecté -->
 						<a class="btn btn-sm" href="user/logout" title="Se déconnecter">
 							<i class="fas fa-sign-out-alt"></i>

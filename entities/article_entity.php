@@ -16,6 +16,7 @@
 		private string $_createdate;
 		private string $_creator;	
 		private int $_creator_id;
+		private int $_valid;
 		
 		// ################### Méthodes ######################## //
 	
@@ -89,6 +90,13 @@
 		}
 		public function setCreator_id(int $intCreatorId){ 
 			$this->_creator_id = $intCreatorId;
+		}		
+		
+		public function getValid():int{ 
+			return $this->_valid;
+		}
+		public function setValid(int $intValid){ 
+			$this->_valid = $intValid;
 		}		
 		
 	}

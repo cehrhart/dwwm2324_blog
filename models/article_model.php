@@ -49,7 +49,7 @@
 			}
 
 			// Les articles validés // TODO revoir les droits
-			$strQuery 	.= $strWhere." article_valid = 1 ";
+			//$strQuery 	.= $strWhere." article_valid = 1 ";
 			$strWhere	= " AND ";
 			
 			// Tri par ordre décroissant
@@ -182,4 +182,21 @@
 							WHERE article_id = ".$id;
 			return $this->_db->query($strQuery)->fetch();			
 		}
+	
+		/**
+		* Méthode d'administration de la gestion des articles
+		*/
+		public function findList(){
+			$strQuery 	= "SELECT article_id, article_title, article_img, article_content, 
+							article_valid
+							FROM articles";
+							
+			if (!in_array($_SESSION['user']['user_role'], array('admin', 'modo'))){
+				$strQuery 	.= " WHERE article_creator = ".$_SESSION['user']['user_id'];
+			}
+			$strQuery 	.= ";";
+			return $this->_db->query($strQuery)->fetchAll();			
+			
+		}
+		
 	}

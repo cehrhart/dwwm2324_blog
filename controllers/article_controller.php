@@ -280,4 +280,31 @@
 		}
 		
 		
+		/**
+		* Méthode permettant d'afficher les articles pour les gérer
+		*/
+		public function manage(){
+			
+			// si l'utilisateur est connecté
+			if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['user_id'] == ''){
+				header("Location:http://localhost/blog/error/show403");
+			}
+			
+			$objArticleModel	= new ArticleModel;
+			$arrArticles		= $objArticleModel->findList();
+
+			$arrArticlesToDisplay	= array();
+			foreach($arrArticles as $arrDetailArticle){	
+				$objArticle = new Article();		// instancie un objet Article
+				$objArticle->hydrate($arrDetailArticle);
+				$arrArticlesToDisplay[] = $objArticle;
+			}			
+			$this->_arrData["arrArticlesToDisplay"] = $arrArticlesToDisplay;
+
+			$this->_arrData["strPage"] 	= "manage";
+			$this->_arrData["strTitle"] = "Gérer les articles";
+			$this->_arrData["strDesc"] 	= "Page permettant d'afficher les articles pour les gérer";
+
+			$this->afficheTpl("article_manage");
+		}
 	}
