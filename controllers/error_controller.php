@@ -9,7 +9,10 @@
 		}
 		
 		public function show403(){
-			echo("erreur 403");
+			$this->_arrData["strPage"] 	= "403";
+			$this->_arrData["strTitle"] = "Vous n'êtes pas autorisé";
+			$this->_arrData["strDesc"] 	= "Page affichant le fait que l'utilisateur n'a pas les droits suffisants";
+			$this->afficheTpl("show403");
 		}
 		
 	}
