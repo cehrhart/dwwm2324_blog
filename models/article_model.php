@@ -194,7 +194,7 @@
 			if (!in_array($_SESSION['user']['user_role'], array('admin', 'modo'))){
 				$strQuery 	.= " WHERE article_creator = ".$_SESSION['user']['user_id'];
 			}
-			$strQuery 	.= ";";
+			$strQuery 	.= " ORDER BY article_createdate DESC;";
 			return $this->_db->query($strQuery)->fetchAll();			
 			
 		}
