@@ -1,15 +1,25 @@
 <?php
+
 	/**
 	* Controller mère
 	* @author Christel
+	* @TODO Opimisation : Remonter la gestion et l'affichage des erreurs
 	*/
 	class Ctrl{
+		
+		const BASE_URL = "http://localhost/blog/";
+		
+		// Tableau d'erreur 
+		protected array $_arrErrors = array();
+		
 		// Tableau des données à utiliser dans le template
-		protected array $_arrData = array(); 
-		protected array $_arrMimesType = array("image/jpeg", "image/png");
+		protected array $_arrData	= array(); 
+		
+		// Tableau pour les types Mimes
+		protected array $_arrMimesType	= array("image/jpeg", "image/png");
 		
 		// Tableau de configuration des cookies
-		protected array $_arrCookieOptions = array ();
+		protected array $_arrCookieOptions 	= array ();
 		
 		// Tableau de sécurisation des pages => uniquement pour l'admin
 		protected array $_arrAdminPages = array("page/about", "page/mentions");
@@ -24,7 +34,7 @@
 									'httponly' 	=> true,    // accessible uniquement en http, pas en js par exemple
 									'samesite' 	=> 'Strict' // None || Lax  || Strict
 									);
-
+			
 			
 			
 			// Pages admin uniquement
@@ -32,7 +42,7 @@
 				$strPage	= $_GET['ctrl'].'/'.$_GET['action'];
 				
 				if (in_array($strPage, $this->_arrAdminPages) && $_SESSION['user']['user_role'] != "admin"){
-					header("Location:http://localhost/blog/error/show403");
+					header("Location:".self::BASE_URL."error/show403");
 				}
 			}
 		}
@@ -41,8 +51,8 @@
 		* Méthode d'affichage des templates
 		* @param $strTpl Nom du template à afficher
 		*/
-		public function afficheTpl($strTpl){
-			include("libs/smarty/Smarty.class.php");
+		public function afficheTpl($strTpl, $boolDisplay = true){
+			include_once("libs/smarty/Smarty.class.php");
 			$smarty = new Smarty();
 
 			foreach($this->_arrData as $key=>$value){
@@ -50,8 +60,13 @@
 			}
 			// L'utilisateur en session
 			$smarty->assign("user", $_SESSION['user']??array());
+			$smarty->assign("base_url", self::BASE_URL);
 			
-			$smarty->display("views/".$strTpl.".tpl");
+			if ($boolDisplay){
+				$smarty->display("views/".$strTpl.".tpl");
+			}else{
+				return $smarty->fetch("views/".$strTpl.".tpl");
+			}
 		}
 		
 		
