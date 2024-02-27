@@ -1,7 +1,16 @@
 <?php
+	/**
+	* Classe modèle parente
+	* @author Christel Ehrhart
+	* @version 2024
+	*/
 	class Model{
 		protected $_db;		
 		
+		/**
+		* Constructeur de la Classe
+		* Permet la connection à la BDD
+		*/
 		public function __construct(){
 			try{
 				// Connexion à la BDD

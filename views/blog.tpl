@@ -1,7 +1,7 @@
 {extends file="views/layout.tpl"}
 
 {block name="js_head" append}
-	<script src="assets/js/period.js"></script>
+	<script src="{$base_url}assets/js/period.js"></script>
 {/block}
 
 {block name="js_footer" append}
@@ -13,14 +13,17 @@
 {block name="contenu"}
 <div class="row mb-2">
 	{if isset($user.user_id) && $user.user_id != ''}
-	<a href="article/addedit" alt="Ajouter un article">Ajouter un article</a>
+	<a href="{$base_url}article/addedit" alt="Ajouter un article">Ajouter un article</a>
 	{/if}
-	<form name="formSearch" method="post" action="article/blog">
+	<form name="formSearch" method="post" action="{$base_url}article/blog">
 		<fieldset>
 			<legend>Rechercher des articles</legend>
-			<p><label for="keywords">Mots clés</label>
-				<input id="keywords" type="text" name="keywords" value="{$strKeywords}" />
-			</p>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label" for="keywords">Mots clés</label>
+				<div class="col-sm-10">
+					<input class="form-control" id="keywords" type="text" name="keywords" value="{$strKeywords}" />
+				</div>
+			</div>
 			<p>	<input type="radio" name="period" {if ($intPeriod) == 0}checked{/if} value="0" onclick="changePeriod()" /> Par date exacte
 				<input type="radio" name="period" {if ($intPeriod) == 1}checked{/if} value="1" onclick="changePeriod()" /> Par période
 			</p>

@@ -14,7 +14,7 @@
 						Contactez nous
 					</h3>
 
-					<form name="contactForm" action="#" method="post" novalidate onSubmit="verifForm();return false;">
+					<form name="contactForm" action="page/contact" method="post" novalidate onSubmit="verifForm();return false;">
 						<div class="row g-3">
 							<p>Les informations obligatoires sont suivies d'un *</p>
 							<div id="message"></div>

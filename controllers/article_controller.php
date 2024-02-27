@@ -110,7 +110,7 @@
 			
 			// si l'utilisateur est connecté
 			if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['user_id'] == ''){
-				header("Location:http://localhost/blog/error/show403");
+				header("Location:".parent::BASE_URL."error/show403");
 			}
 			
 			// Numéro de l'article à modifier
@@ -133,7 +133,7 @@
 				$objArticle->hydrate($arrArticle);
 				if ($_SESSION['user']['user_role'] != "admin" && 
 					$_SESSION['user']['user_id'] != $objArticle->getCreator_id()){
-					header("Location:http://localhost/blog/error/show403");
+					header("Location:".parent::BASE_URL."error/show403");
 				}
 			}		
 			
@@ -198,22 +198,6 @@
 							$arrErrors['img'] = "Erreur lors de l'enregistrement de l'image";
 						}
 						
-						/* sans redimensionnement
-						switch ($_FILES['image']['type']){
-							case "image/jpeg": 
-								$strImgName	= bin2hex(random_bytes(5)).".jpg"; // texte aléatoire
-								break;
-							case "image/png": 
-								$strImgName	= bin2hex(random_bytes(5)).".png"; // texte aléatoire
-								break;
-						}
-						$strDest	= "uploads/".$strImgName;
-						// Si la copie de l'image s'est bien passée
-						if (move_uploaded_file($strSource, $strDest)){
-							$objArticle->setImg($strImgName);
-						}else{
-							$arrErrors['img'] = "Erreur lors de l'enregistrement de l'image";
-						}*/
 					}else{
 						$arrErrors['img'] = "Le type d'image n'est pas autorisé";
 					}
@@ -224,15 +208,15 @@
 				if (count($arrErrors) == 0){
 					if ($objArticle->getId() === 0){
 						if ($objArticleModel->insert($objArticle)){
-							header("Location:index.php?ctrl=article&action=blog");
+							header("Location:".parent::BASE_URL."article/blog");
 						}else{
 							$arrErrors[] = "L'insertion s'est mal passée";
 						}
 					}else{
 						if ($objArticleModel->update($objArticle)){
-							header("Location:index.php?ctrl=article&action=blog");
+							header("Location:".parent::BASE_URL."article/blog");
 						}else{
-							$arrErrors[] = "L'insertion s'est mal passée";
+							$arrErrors[] = "La modification s'est mal passée";
 						}
 					}
 				}
@@ -259,6 +243,8 @@
 		* Méthode permettant d'afficher le détail d'un article
 		*/
 		public function read(){
+			$arrErrors = array();
+			
 			// Numéro de l'article à afficher
 			$intArticleId	= $_GET['id']??0;
 
@@ -268,9 +254,22 @@
 
 			$objArticle 		= new Article();	// instancie un objet Article
 			$objArticle->hydrate($arrArticle);
+			$objArticle->setValid(0);
+			$objArticle->setComment('');
+			
+			if (count($_POST) >0){
+				$objArticle->setValid($_POST['moderation']);
+				$objArticle->setComment($_POST['comment']);
+				
+				if(!$objArticle->getValid() && $objArticle->getComment() == ''){
+					$arrErrors['comment'] = "Le commentaire est obligatoire quand la validation de l'article est refusée";
+				}else{
+					$objArticleModel->moderate($objArticle);
+				}
+			}
+
 			$this->_arrData["objArticle"] 	= $objArticle;
-
-
+			$this->_arrData["arrErrors"] 	= $arrErrors;
 
 			$this->_arrData["strPage"] 	= "read";
 			$this->_arrData["strTitle"] = "Détail d'un article";
@@ -284,10 +283,9 @@
 		* Méthode permettant d'afficher les articles pour les gérer
 		*/
 		public function manage(){
-			
 			// si l'utilisateur est connecté
 			if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['user_id'] == ''){
-				header("Location:http://localhost/blog/error/show403");
+				header("Location:".parent::BASE_URL."error/show403");
 			}
 			
 			$objArticleModel	= new ArticleModel;
@@ -306,5 +304,16 @@
 			$this->_arrData["strDesc"] 	= "Page permettant d'afficher les articles pour les gérer";
 
 			$this->afficheTpl("article_manage");
+		}
+	
+		/**
+		* Méthode permettant de supprimer un Article
+		*/
+		public function delete(){
+			// Numéro de l'article à supprimer
+			$intArticleId		= $_GET['id']??0;
+			$objArticleModel	= new ArticleModel();
+			$objArticleModel->delete($intArticleId);
+			header("Location:".parent::BASE_URL."article/manage");
 		}
 	}

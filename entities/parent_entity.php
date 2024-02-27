@@ -1,5 +1,9 @@
 <?php
-
+	/**
+	* Classe entité parente
+	* @author Christel Ehrhart
+	* @version 2024
+	*/
 	class Entity {
 		
 		protected string $_strPrefixe;		

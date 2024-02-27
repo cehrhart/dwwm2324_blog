@@ -12,9 +12,9 @@
 			{if ( isset($user.user_id) && $user.user_id != '' ) 
 				&& 
 				( $user.user_role == 'admin' || $objArticle->getCreator_id() == $user.user_id ) }
-				<a href="article/addedit?id={$objArticle->getId()}" alt="Modifier l'article">Modifier l'article</a>
+				<a href="{$base_url}article/addedit?id={$objArticle->getId()}" alt="Modifier l'article">Modifier l'article</a>
 			{/if}
-			<a href="article/read?id={$objArticle->getId()}" class="icon-link gap-1 icon-link-hover">Lire la suite</a>
+			<a href="{$base_url}article/read?id={$objArticle->getId()}" class="icon-link gap-1 icon-link-hover">Lire la suite</a>
 		</div>
 		<div class="col-auto d-none d-lg-block">
 			<img class="bd-placeholder-img" width="200" height="250" 

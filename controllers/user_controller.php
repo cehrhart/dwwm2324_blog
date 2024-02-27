@@ -1,10 +1,10 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\Exception;
 
-require 'libs/PHPMailer/Exception.php';
-require 'libs/PHPMailer/PHPMailer.php';
-require 'libs/PHPMailer/SMTP.php';
+	require 'libs/PHPMailer/Exception.php';
+	require 'libs/PHPMailer/PHPMailer.php';
+	require 'libs/PHPMailer/SMTP.php';
 
 	/** 
 	* Controller des utilisateurs
@@ -27,41 +27,8 @@ require 'libs/PHPMailer/SMTP.php';
 				// Vérification des données de l'utilisateur
 				$arrErrors = $this->_verifInfos($objUser);
 				
-				/*if ($objUser->getName() == ""){
-					$arrErrors['name'] = "Le nom est obligatoire";
-				}elseif (strlen($objUser->getName()) < 2){
-					$arrErrors['name'] = "Le nom est trop court";
-				}
-				
-				if ($objUser->getFirstname() == ""){
-					$arrErrors['firstname'] = "Le prénom est obligatoire";
-				}
-				
-				if ($objUser->getMail() == ""){
-					$arrErrors['mail'] = "Le mail est obligatoire";
-				}elseif (!filter_var($objUser->getMail(), FILTER_VALIDATE_EMAIL)) {
-					$arrErrors['mail'] = "Le mail n'est pas correct";
-				}else{
-
-					// Test si le mail existe déjà
-					$boolMailExists	= $objUserModel->verifMail($objUser->getMail());
-					if ($boolMailExists === true){
-						$arrErrors['mail'] = "Le mail est déjà utilisé";
-					}
-				}*/
 				// Vérifications du mot de passe
 				$arrErrors = array_merge($arrErrors, $this->_verifPwd($objUser->getPwd()));
-
-				/*$password_regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{16,}$/"; 
-				
-				if ($objUser->getPwd() == ""){
-					$arrErrors['pwd'] = "Le mot de passe est obligatoire";
-				}elseif(!preg_match($password_regex, $objUser->getPwd())){
-					$arrErrors['pwd'] = "Le mot de passe doit faire minimum 16 caractères 
-										et contenir une minuscule, une majuscule, un chiffre et un caractère";
-				}elseif ($objUser->getPwd() != $_POST['passwd_confirm']){
-					$arrErrors['pwd'] = "Le mot de passe et sa confirmation doivent être identiques";
-				}*/
 				
 				if(count($arrErrors) == 0){
 					//$objUser->setPwd(password_hash($objUser->getPwd(), PASSWORD_DEFAULT));
@@ -133,7 +100,7 @@ require 'libs/PHPMailer/SMTP.php';
 		public function edit_profile(){
 			// Est-ce que l'utilisateur est connecté ?
 			if (!isset($_SESSION['user']['user_id']) || $_SESSION['user']['user_id'] == ''){
-				header('Location:".parent::BASE_URL."error/show403');
+				header('Location:'.parent::BASE_URL.'error/show403');
 			}
 			
 			$arrErrors	= array();
@@ -255,10 +222,14 @@ require 'libs/PHPMailer/SMTP.php';
 			return $arrErrors;
 		}
 		
+		/**
+		* Methode permettant de demander la réinitialisation du mot de passe
+		* @TODO : Afficher le formulaire + envoyer le mail si adresse mail ok
+		*/
 		public function forgetPwd(){
 			
 			// Envoyer
-			
+			/*
 			$mail = new PHPMailer();
 			$mail->IsSMTP();
 			$mail->Mailer = "smtp";
@@ -282,7 +253,7 @@ require 'libs/PHPMailer/SMTP.php';
 				echo 'Erreur de Mailer : ' . $mail->ErrorInfo;
 			} else {
 				echo 'Le message a été envoyé.';
-			}
+			}*/
 
 		}
 	}

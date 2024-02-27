@@ -30,6 +30,10 @@
 			<label for="passwd_confirm">Confirmation du mot de passe</label>
 			<input type="password" name="passwd_confirm" id="passwd_confirm">
 		</p>
+		<!--p>
+			<label for="newsletter">Inscription newsletter</label>
+			<input type="checkbox" name="newsletter" id="newsletter" value="1">
+		</p-->
 		<p>
 			<input type="submit" />
 		</p>		

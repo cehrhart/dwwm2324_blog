@@ -1,6 +1,13 @@
 <?php
+	/** 
+	* Controller des erreurs
+	* @author Christel
+	*/
 	class ErrorCtrl extends Ctrl{
 		
+		/**
+		* Méthode permettant d'afficher l'erreur 404
+		*/
 		public function show404(){
 			$this->_arrData["strPage"] 	= "404";
 			$this->_arrData["strTitle"] = "Page non trouvée";
@@ -8,6 +15,9 @@
 			$this->afficheTpl("show404");
 		}
 		
+		/**
+		* Méthode permettant d'afficher l'erreur 403
+		*/
 		public function show403(){
 			$this->_arrData["strPage"] 	= "403";
 			$this->_arrData["strTitle"] = "Vous n'êtes pas autorisé";

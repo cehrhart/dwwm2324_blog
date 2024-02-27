@@ -100,9 +100,4 @@
 		public function getPwdHash():string{ 
 			return password_hash($this->_pwd, PASSWORD_DEFAULT);
 		}
-
-		
-
-
-
 	}		

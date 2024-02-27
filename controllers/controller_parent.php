@@ -22,7 +22,7 @@
 		protected array $_arrCookieOptions 	= array ();
 		
 		// Tableau de sécurisation des pages => uniquement pour l'admin
-		protected array $_arrAdminPages = array("page/about", "page/mentions");
+		protected array $_arrAdminPages = array();
 		
 		public function __construct(){
 			
