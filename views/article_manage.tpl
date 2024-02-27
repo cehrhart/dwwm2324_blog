@@ -30,15 +30,21 @@
 			{* mode PHP fonctionne aussi :D *}
 			{foreach $arrArticlesToDisplay as $objArticle}
 			<tr>
-				<td>{$objArticle->getId()}</td>
-				<td><img class="img-thumbnail convertTo64" src="uploads/{$objArticle->getImg()}" alt="{$objArticle->getTitle()}" ></td>
+				<td class="text-center">{$objArticle->getId()}</td>
+				<td class="text-center"><img class="img-thumbnail convertTo64" src="uploads/{$objArticle->getImg()}" alt="{$objArticle->getTitle()}" ></td>
 				<td>{$objArticle->getTitle()}</td>
 				<td>{$objArticle->getContent()}</td>
-				<td>{if $objArticle->getValid()}oui{else}non{/if}</td>
-				<td>
+				<td class="text-center">
+					{if $objArticle->getValid()}
+					<i class="text-success fa fa-check"></i>
+					{else}
+					<i class="text-danger fa fa-xmark"></i>
+					{/if}
+				</td>
+				<td class="text-center">
 					<a class="btn btn-primary" href="article/addedit?id={$objArticle->getId()}" alt="Modifier l'article"><i class="fa fa-edit"></i></a>
 					{if (isset($smarty.session.user.user_id) && $smarty.session.user.user_role == "modo")}
-					<a class="btn btn-secondary" href="article/read?id={$objArticle->getId()}" alt="Modérer l'article">Modérer l'article</a>
+					<a class="btn btn-secondary" href="article/read?id={$objArticle->getId()}" alt="Modérer l'article"><i class="fa fa-check-double"></i></a>
 					{/if}
 					<a class="btn btn-danger" href="article/delete?id={$objArticle->getId()}" alt="Supprimer l'article"><i class="fa fa-trash"></i></a>
 				</td>
@@ -60,7 +66,7 @@
 		language: {
 			url: '//cdn.datatables.net/plug-ins/2.0.0/i18n/fr-FR.json',
 		},
-		columns: [{width: '5%'}, {width: '10%'}, {width: '35%'}, {width: '35%'}, {width: '5%'}, {width: '10%'}],
+		columns: [{width: '5%'}, {width: '10%'}, {width: '30%'}, {width: '30%'}, {width: '5%'}, {width: '20%'}],
 		ordering:  false,
 		
 	});
