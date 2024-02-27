@@ -17,6 +17,7 @@
 		private string $_creator;	
 		private int $_creator_id;
 		private int $_valid;
+		private string $_comment;
 		
 		// ################### Méthodes ######################## //
 	
@@ -99,4 +100,11 @@
 			$this->_valid = $intValid;
 		}		
 		
+		public function getComment():string{ 
+			return $this->_comment;
+		}
+		public function setComment(string $strComment){ 
+			$this->_comment = trim($strComment); // Enlève les espaces avant et après
+			$this->_comment = filter_var($this->_comment, FILTER_SANITIZE_FULL_SPECIAL_CHARS); // nettoyage
+		}		
 	}

@@ -199,4 +199,35 @@
 			
 		}
 		
+		/**
+		* Methode permettant de mettre à jour l'article avec les informations de modération
+		* @param object $objArticle Objet article
+		*/
+		public function moderate($objArticle){
+			$strQuery	= "	UPDATE articles 
+							SET article_valid = :valid, 
+								article_comment = :comment, 
+								article_modo = :modo
+							WHERE article_id = :id";
+			// On prépare la requête
+			$rqPrep	= $this->_db->prepare($strQuery);
+			$rqPrep->bindValue(":valid", $objArticle->getValid(), PDO::PARAM_INT);
+			$rqPrep->bindValue(":comment", $objArticle->getComment(), PDO::PARAM_STR);
+			$rqPrep->bindValue(":modo", $_SESSION['user']['user_id'], PDO::PARAM_INT);
+			$rqPrep->bindValue(":id", $objArticle->getId(), PDO::PARAM_INT);
+			
+			//var_dump($this->_db->lastInsertId());die;
+			return $rqPrep->execute();			
+		}
+		
+		/**
+		* Méthode permettant de supprimer l'article en BDD
+		* @param int $id Identifiant de l'article à supprimer
+		*/
+		public function delete (int $id){
+			$strQuery 	= "DELETE FROM articles
+							WHERE article_id = ".$id;
+			return $this->_db->exec($strQuery);
+		}
+		
 	}
