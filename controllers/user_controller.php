@@ -260,15 +260,55 @@
 			$this->_arrData["arrSuccess"]= $arrSuccess;
 			$this->afficheTpl("forget");
 
-			
-			
-
 		}
 		
 		public function resetPwd(){
-			var_dump($_GET['code']);
+			$strCode		= $_GET['code'];
+			$objUserModel	= new UserModel;
+			$arrUser		= $objUserModel->searchByCode($strCode);
 			
+			$arrErrors		= array();
+			if ($arrUser === false){
+				$arrErrors['url']			= "La demande est expirée";
+			}else{
+				$_SESSION['user_recovery'] 	= $arrUser['user_id'];
+				Header("Location:".parent::BASE_URL."user/doResetPwd");
+			}
+			
+			$this->_arrData["strPage"] 	= "resetPwd";
+			$this->_arrData["strTitle"] = "Réinitialisation du mot de passe";
+			$this->_arrData["strDesc"] 	= "Page permettant de réinitialisation son mot de passe";
+			$this->_arrData["arrErrors"]= $arrErrors;
+			$this->afficheTpl("reset");
 		}
+		
+		public function doResetPwd(){
+			$arrErrors	= array();
+			if (count($_POST) >0){
+				// vérifier les mots de passe
+				$arrErrors = $this->_verifPwd($_POST['pwd']);
+				if (count($arrErrors) == 0){
+					// mettre à jour la bdd
+					$objUserModel	= new UserModel;
+					if ($objUserModel->updatePwd($_POST['pwd'])){
+						session_destroy();
+						Header("Location:".parent::BASE_URL."user/login");
+					}else{
+						$arrErrors['mdp'] = "erreur de modification du mot de passe";
+					}
+				}
+			}			
+			
+			$this->_arrData["strPage"] 	= "resetPwd";
+			$this->_arrData["strTitle"] = "Réinitialisation du mot de passe";
+			$this->_arrData["strDesc"] 	= "Page permettant de réinitialisation son mot de passe";
+			$this->_arrData["arrErrors"]= $arrErrors;
+			//$this->_arrData["arrSuccess"]= $arrSuccess;
+			$this->afficheTpl("doreset");
+		}		
+		
+		
+		
 		private function _sendMail($strDestMail, $strSubject, $strBody){
 			$mail = new PHPMailer();
 			$mail->IsSMTP();

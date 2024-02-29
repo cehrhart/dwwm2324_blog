@@ -158,4 +158,25 @@
 			return $this->_db->exec($strQuery);				
 		}
 		
+		public function searchByCode($strCode){
+			$strQuery 	= "SELECT * 
+							FROM users
+							WHERE user_recocode = :code
+							AND user_recoexp > NOW()";
+			$rqPrep	= $this->_db->prepare($strQuery);
+			$rqPrep->bindValue(":code", $strCode, PDO::PARAM_STR);
+			$rqPrep->execute();
+			return $rqPrep->fetch();
+		}
+
+		public function updatePwd($strPassword){
+			$strQuery 	= "UPDATE users
+							SET user_pwd = :pwd
+							WHERE user_id = ".$_SESSION['user_recovery'].";";
+			$rqPrep	= $this->_db->prepare($strQuery);
+			
+			$rqPrep->bindValue(":pwd", password_hash($strPassword, PASSWORD_DEFAULT), PDO::PARAM_STR);
+			
+			return $rqPrep->execute();
+		}
 	}
