@@ -9,7 +9,7 @@
 		</div>
 	{/if}		
 	<form action="{$base_url}user/login" method="post" >
-		<!--input type="hidden" name="csrf" value="{$csrf}" -->
+		<input type="hidden" name="csrf" value="{$csrf}">
 		<p>
 			<label for="email">E-mail</label>
 			<input id="email" type="email" name="email" value="{$email}" >

@@ -82,7 +82,7 @@
 			$this->_arrData["strDesc"] 	= "Page permettant de se connecter";
 			$this->_arrData["arrErrors"]= $arrErrors;
 			$this->_arrData["email"]	= $strEmail;
-			//$this->_arrData['csrf']		= $this->_generateCsrfToken();
+			$this->_arrData['csrf']		= $this->_generateCsrfToken();
 			$this->afficheTpl("login");
 		}
 		
