@@ -65,7 +65,6 @@
 			$strEmail 	= $_POST['email']??"";
 			$strPwd 	= $_POST['password']??"";
 			if (count($_POST) > 0){ // si le formulaire est envoyé
-				
 				$objUserModel	= new UserModel;
 				$arrUser 		= $objUserModel->searchUser($strEmail, $strPwd);
 
@@ -83,6 +82,7 @@
 			$this->_arrData["strDesc"] 	= "Page permettant de se connecter";
 			$this->_arrData["arrErrors"]= $arrErrors;
 			$this->_arrData["email"]	= $strEmail;
+			//$this->_arrData['csrf']		= $this->_generateCsrfToken();
 			$this->afficheTpl("login");
 		}
 		
@@ -163,7 +163,7 @@
 			$this->_arrData["strTitle"] 	= "Modifier mon compte";
 			$this->_arrData["strDesc"] 		= "Page permettant de modifier mon compte";
 			$this->_arrData["arrErrors"] 	= $arrErrors;
-			$this->_arrData["objUser"]	= $objUser;
+			$this->_arrData["objUser"]		= $objUser;
 			$this->afficheTpl("edit_profile");
 		}
 		
@@ -228,8 +228,48 @@
 		*/
 		public function forgetPwd(){
 			
-			// Envoyer
-			/*
+			$arrErrors = array();
+			$arrSuccess = array();
+			if (count($_POST) > 0){
+				if ($_POST['email'] == ''){
+					$arrErrors['email'] = "Vous devez renseigner un mail";
+				}else{
+					$arrSuccess['email'] = "Si vous êtes inscrit vous allez recevoir un mail ....";
+					$objUserModel	= new UserModel;
+					$intUserId		= $objUserModel->getByMail($_POST['email']);
+					if ($intUserId !== false){ 
+						$strRecoCode 	= bin2hex(random_bytes(12));
+						
+						if ($objUserModel->updateReco($strRecoCode, $intUserId)){
+							$strDestMail 	= $_POST['email'];
+							$strSubject		= 'Récupération du mot de passe';
+							
+							$this->_arrData["code"] 	= $strRecoCode;
+							$strBody		= $this->afficheTpl("mails/contact", false);
+							
+							$this->_sendMail($strDestMail, $strSubject, $strBody);
+						}
+					}
+				}
+			}
+			
+			$this->_arrData["strPage"] 	= "forgetPwd";
+			$this->_arrData["strTitle"] = "Mot de passe oublié";
+			$this->_arrData["strDesc"] 	= "Page permettant de régénérer son mot de passe";
+			$this->_arrData["arrErrors"]= $arrErrors;
+			$this->_arrData["arrSuccess"]= $arrSuccess;
+			$this->afficheTpl("forget");
+
+			
+			
+
+		}
+		
+		public function resetPwd(){
+			var_dump($_GET['code']);
+			
+		}
+		private function _sendMail($strDestMail, $strSubject, $strBody){
 			$mail = new PHPMailer();
 			$mail->IsSMTP();
 			$mail->Mailer = "smtp";
@@ -243,17 +283,12 @@
 			$mail->Password 	= 'lkpy yuoc ftuu qksu';
 			$mail->CharSet		= PHPMailer::CHARSET_UTF8;
 			$mail->IsHTML(true);
-			$mail->setFrom('monadresse@gmail.com', ' é christel');
-			$mail->addAddress('christel.ehrhart@gmail.com', 'Nom du destinataire');
-			$mail->Subject = 'Essai de PHPMailer';
-			$mail->Body = $this->afficheTpl("mails/contact", false);
-			$mail->addAttachment('test.txt');
+			$mail->setFrom('mon_blog@gmail.com', 'Exercice BLOG');
+			$mail->addAddress($strDestMail);
+			$mail->Subject 	= $strSubject;
+			$mail->Body 	= $strBody;
+			//$mail->addAttachment('test.txt');
 
-			if (!$mail->send()) {
-				echo 'Erreur de Mailer : ' . $mail->ErrorInfo;
-			} else {
-				echo 'Le message a été envoyé.';
-			}*/
-
+			return $mail->send();
 		}
 	}
