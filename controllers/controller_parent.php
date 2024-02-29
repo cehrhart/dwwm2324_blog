@@ -45,6 +45,11 @@
 					header("Location:".self::BASE_URL."error/show403");
 				}
 			}
+			
+			// Vérification du token CSRF => Ajouter les input name=csrf
+			/*if (count($_POST) > 0 && isset($_SESSION['csrf_token']) && !$this->_verifyCsrfToken($_POST['csrf'])){
+				header("Location:".self::BASE_URL."error/show403");
+			}*/
 		}
 		
 		/**
@@ -70,5 +75,24 @@
 		}
 		
 		
+		/** 
+		* Fonction permettant de générer et stocker le token CSRF dans la session
+		* @return string Le token généré
+		*/
+		protected function _generateCsrfToken():string {
+			$strCSRFToken = bin2hex(random_bytes(32)); // Génère un token aléatoire
+			return $_SESSION['csrf_token'] = $strCSRFToken;
+		}
+		
+		/**
+		* Méthode permettant de vérifier le token CSRF
+		* @param string $strCSRFToken Le token à vérifier
+		* @return boolean le résultat de la vérification
+		*/
+		// Vérifier le token CSRF
+		protected function _verifyCsrfToken(string $strCSRFToken):bool {
+			return isset($_SESSION['csrf_token']) && $_SESSION['csrf_token'] === $strCSRFToken;
+		}
+
 		
 	}
