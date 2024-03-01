@@ -32,7 +32,7 @@
 	}
 	
 	if ($bool404){
-		header('Location:index.php?action=show404&ctrl=error');
+		header('Location:'.Ctrl::BASE_URL.'error/show404');
 	}
 
 	
