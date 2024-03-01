@@ -9,9 +9,10 @@
 		
 		const BASE_URL = "http://localhost/blog/";
 		
-		// Tableau d'erreur 
-		protected array $_arrErrors = array();
-		
+		// Tableaux d'erreur / success
+        protected array $_arrErrors = array();
+        protected array $_arrSuccess = array();
+
 		// Tableau des données à utiliser dans le template
 		protected array $_arrData	= array(); 
 		
@@ -66,8 +67,12 @@
 			// L'utilisateur en session
 			$smarty->assign("user", $_SESSION['user']??array());
 			$smarty->assign("base_url", self::BASE_URL);
-			
-			if ($boolDisplay){
+
+            // Les erreurs
+            $smarty->assign("arrErrors", $this->_arrErrors);
+            $smarty->assign("arrSuccess", $this->_arrSuccess);
+
+            if ($boolDisplay){
 				$smarty->display("views/".$strTpl.".tpl");
 			}else{
 				return $smarty->fetch("views/".$strTpl.".tpl");

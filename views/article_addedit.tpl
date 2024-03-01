@@ -1,13 +1,6 @@
 {extends file="views/layout.tpl"}
 
 {block name="contenu"}
-	{if (count($arrErrors) >0) }
-		<div class="alert alert-danger">
-		{foreach from=$arrErrors item=strError}
-			<p>{$strError}</p>
-		{/foreach}
-		</div>
-	{/if}	
 	<form action="article/addedit{if (isset($smarty.get.id) && $smarty.get.id != '' )}?id={$smarty.get.id}{/if}" method="post" enctype="multipart/form-data" >
 		<p>
 			<label for="titre">Titre de l'article</label>

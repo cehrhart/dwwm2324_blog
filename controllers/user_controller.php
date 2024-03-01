@@ -19,24 +19,22 @@
 		* Méthode permettant de créer un compte 
 		*/
 		public function create_account(){
-			$arrErrors = array();
-			//var_dump($_POST);
 			$objUser = new User();
 			if (count($_POST) > 0){
 				$objUser->hydrate($_POST);
 				// Vérification des données de l'utilisateur
-				$arrErrors = $this->_verifInfos($objUser);
+				$this->_arrErrors = $this->_verifInfos($objUser);
 				
 				// Vérifications du mot de passe
-				$arrErrors = array_merge($arrErrors, $this->_verifPwd($objUser->getPwd()));
+				$this->_arrErrors = array_merge($this->_arrErrors, $this->_verifPwd($objUser->getPwd()));
 				
-				if(count($arrErrors) == 0){
+				if(count($this->_arrErrors) == 0){
 					//$objUser->setPwd(password_hash($objUser->getPwd(), PASSWORD_DEFAULT));
 					$objUserModel	= new UserModel;
 					if ($objUserModel->insert($objUser)){
 						header("Location:".parent::BASE_URL."article/home");
 					}else{
-						$arrErrors[] = "L'insertion s'est mal passée";
+						$this->_arrErrors[] = "L'insertion s'est mal passée";
 					}
 				}
 				
@@ -50,7 +48,6 @@
 			$this->_arrData["strPage"] 		= "create_account";
 			$this->_arrData["strTitle"] 	= "Créer un compte";
 			$this->_arrData["strDesc"] 		= "Page permettant de créer un compte";
-			$this->_arrData["arrErrors"] 	= $arrErrors;
 			$this->_arrData["objUser"]		= $objUser;
 			$this->afficheTpl("create_account");
 		}
@@ -59,7 +56,7 @@
 		* Méthode de connection d'un utilisateur
 		*/
 		public function login(){
-			$arrErrors = array();
+			$this->_arrErrors = array();
 			
 			/* 2. Rechercher l'utilisateur dans la BDD */
 			$strEmail 	= $_POST['email']??"";
@@ -70,7 +67,7 @@
 
 				if ($arrUser === false){
 					/* 3. Si pas ok => Afficher un message d'erreur */
-					$arrErrors[] = "Erreur de connexion";
+					$this->_arrErrors[] = "Erreur de connexion";
 				}else{
 					/* 3. Si ok => Session */
 					$_SESSION['user'] = $arrUser;
@@ -80,7 +77,6 @@
 			$this->_arrData["strPage"] 	= "login";
 			$this->_arrData["strTitle"] = "Se connecter";
 			$this->_arrData["strDesc"] 	= "Page permettant de se connecter";
-			$this->_arrData["arrErrors"]= $arrErrors;
 			$this->_arrData["email"]	= $strEmail;
 			$this->_arrData['csrf']		= $this->_generateCsrfToken();
 			$this->afficheTpl("login");
@@ -103,7 +99,6 @@
 				header('Location:'.parent::BASE_URL.'error/show403');
 			}
 			
-			$arrErrors	= array();
 			$objUser 	= new User;
 			// Objet à partir de la BDD - à l'affichage du formulaire
 			$objUserModel	= new UserModel;
@@ -121,18 +116,18 @@
 
 				// Vérifier 
 				$boolVerifMail = ($strActualMail != $objUser->getMail());
-				$arrErrors = $this->_verifInfos($objUser, $boolVerifMail);
+				$this->_arrErrors = $this->_verifInfos($objUser, $boolVerifMail);
 
 				if ($objUser->getPwd() != ''){
 					if (password_verify($_POST['oldpwd'], $strOldPwd)){
-						$arrErrors = array_merge($arrErrors, $this->_verifPwd($objUser->getPwd()));
+						$this->_arrErrors = array_merge($this->_arrErrors, $this->_verifPwd($objUser->getPwd()));
 					}else{
-						$arrErrors['pwd']	= "Erreur de mdp";
+						$this->_arrErrors['pwd']	= "Erreur de mdp";
 					}
 				}
 			
 				// Mise à jour en BDD
-				if(count($arrErrors) == 0){
+				if(count($this->_arrErrors) == 0){
 					if ($objUserModel->update($objUser)){
 						// Traitement du pseudo en cookie
 						$strPseudo	= trim($_POST['pseudo']);
@@ -152,7 +147,7 @@
 						
 						header("Location:".parent::BASE_URL."article/home");
 					}else{
-						$arrErrors[] = "L'insertion s'est mal passée";
+						$this->_arrErrors[] = "L'insertion s'est mal passée";
 					}
 				}
 				
@@ -162,7 +157,6 @@
 			$this->_arrData["strPage"] 		= "edit_profile";
 			$this->_arrData["strTitle"] 	= "Modifier mon compte";
 			$this->_arrData["strDesc"] 		= "Page permettant de modifier mon compte";
-			$this->_arrData["arrErrors"] 	= $arrErrors;
 			$this->_arrData["objUser"]		= $objUser;
 			$this->afficheTpl("edit_profile");
 		}
@@ -227,14 +221,11 @@
 		* @TODO : Afficher le formulaire + envoyer le mail si adresse mail ok
 		*/
 		public function forgetPwd(){
-			
-			$arrErrors = array();
-			$arrSuccess = array();
 			if (count($_POST) > 0){
 				if ($_POST['email'] == ''){
-					$arrErrors['email'] = "Vous devez renseigner un mail";
+					$this->_arrErrors['email'] = "Vous devez renseigner un mail";
 				}else{
-					$arrSuccess['email'] = "Si vous êtes inscrit vous allez recevoir un mail ....";
+					$this->_arrSuccess['email'] = "Si vous êtes inscrit vous allez recevoir un mail ....";
 					$objUserModel	= new UserModel;
 					$intUserId		= $objUserModel->getByMail($_POST['email']);
 					if ($intUserId !== false){ 
@@ -256,8 +247,6 @@
 			$this->_arrData["strPage"] 	= "forgetPwd";
 			$this->_arrData["strTitle"] = "Mot de passe oublié";
 			$this->_arrData["strDesc"] 	= "Page permettant de régénérer son mot de passe";
-			$this->_arrData["arrErrors"]= $arrErrors;
-			$this->_arrData["arrSuccess"]= $arrSuccess;
 			$this->afficheTpl("forget");
 
 		}
@@ -267,9 +256,8 @@
 			$objUserModel	= new UserModel;
 			$arrUser		= $objUserModel->searchByCode($strCode);
 			
-			$arrErrors		= array();
 			if ($arrUser === false){
-				$arrErrors['url']			= "La demande est expirée";
+				$this->_arrErrors['url']			= "La demande est expirée";
 			}else{
 				$_SESSION['user_recovery'] 	= $arrUser['user_id'];
 				Header("Location:".parent::BASE_URL."user/doResetPwd");
@@ -278,23 +266,21 @@
 			$this->_arrData["strPage"] 	= "resetPwd";
 			$this->_arrData["strTitle"] = "Réinitialisation du mot de passe";
 			$this->_arrData["strDesc"] 	= "Page permettant de réinitialisation son mot de passe";
-			$this->_arrData["arrErrors"]= $arrErrors;
 			$this->afficheTpl("reset");
 		}
 		
 		public function doResetPwd(){
-			$arrErrors	= array();
 			if (count($_POST) >0){
 				// vérifier les mots de passe
-				$arrErrors = $this->_verifPwd($_POST['pwd']);
-				if (count($arrErrors) == 0){
+				$this->_arrErrors = $this->_verifPwd($_POST['pwd']);
+				if (count($this->_arrErrors) == 0){
 					// mettre à jour la bdd
 					$objUserModel	= new UserModel;
 					if ($objUserModel->updatePwd($_POST['pwd'])){
 						session_destroy();
 						Header("Location:".parent::BASE_URL."user/login");
 					}else{
-						$arrErrors['mdp'] = "erreur de modification du mot de passe";
+						$this->_arrErrors['mdp'] = "erreur de modification du mot de passe";
 					}
 				}
 			}			
@@ -302,8 +288,6 @@
 			$this->_arrData["strPage"] 	= "resetPwd";
 			$this->_arrData["strTitle"] = "Réinitialisation du mot de passe";
 			$this->_arrData["strDesc"] 	= "Page permettant de réinitialisation son mot de passe";
-			$this->_arrData["arrErrors"]= $arrErrors;
-			//$this->_arrData["arrSuccess"]= $arrSuccess;
 			$this->afficheTpl("doreset");
 		}		
 		

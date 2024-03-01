@@ -117,7 +117,6 @@
 			$intArticleId	= $_GET['id']??0;
 			
 			/* 2. Récupérer les informations du formulaire */
-			$arrErrors 			= array();
 			$objArticle 		= new Article();	// instancie un objet Article
 			$objArticleModel	= new ArticleModel();// instancie le modèle Article
 			
@@ -150,13 +149,13 @@
 				/* 3. Créer un objet article */
 				$objArticle->hydrate($_POST);	// hydrate (setters) avec les données du formulaire
 				if ($objArticle->getTitle() == ""){
-					$arrErrors['title'] = "Le titre est obligatoire";
+					$this->_arrErrors['title'] = "Le titre est obligatoire";
 				}
 				if (strlen($objArticle->getTitle()) < 10){
-					$arrErrors['title'] = "Le titre doit faire au minimum 10 caractères";
+					$this->_arrErrors['title'] = "Le titre doit faire au minimum 10 caractères";
 				}
 				if ($objArticle->getContent() == ""){
-					$arrErrors['content'] = "Le contenu est obligatoire";
+					$this->_arrErrors['content'] = "Le contenu est obligatoire";
 				}
 				
 				/* 4. Enregistrer l'image */
@@ -195,28 +194,28 @@
 						if (imagewebp($dest, $strDest, IMG_WEBP_LOSSLESS)){
 							$objArticle->setImg($strImgName);
 						}else{
-							$arrErrors['img'] = "Erreur lors de l'enregistrement de l'image";
+							$this->_arrErrors['img'] = "Erreur lors de l'enregistrement de l'image";
 						}
 						
 					}else{
-						$arrErrors['img'] = "Le type d'image n'est pas autorisé";
+						$this->_arrErrors['img'] = "Le type d'image n'est pas autorisé";
 					}
 				}elseif ($objArticle->getImg() =='') {
-					$arrErrors['img'] = "L'image est obligatoire";
+					$this->_arrErrors['img'] = "L'image est obligatoire";
 				}
 				/* 5. Enregistrer l'objet en BDD */
-				if (count($arrErrors) == 0){
+				if (count($this->_arrErrors) == 0){
 					if ($objArticle->getId() === 0){
 						if ($objArticleModel->insert($objArticle)){
 							header("Location:".parent::BASE_URL."article/blog");
 						}else{
-							$arrErrors[] = "L'insertion s'est mal passée";
+							$this->_arrErrors[] = "L'insertion s'est mal passée";
 						}
 					}else{
 						if ($objArticleModel->update($objArticle)){
 							header("Location:".parent::BASE_URL."article/blog");
 						}else{
-							$arrErrors[] = "La modification s'est mal passée";
+							$this->_arrErrors[] = "La modification s'est mal passée";
 						}
 					}
 				}
@@ -234,7 +233,6 @@
 				$this->_arrData["strTitle"] 	= "Modifier un article";
 				$this->_arrData["strDesc"] 		= "Page permettant de modifier un article";
 			}
-			$this->_arrData["arrErrors"] 	= $arrErrors;
 			/* 1. Afficher le formulaire */
 			$this->afficheTpl("article_addedit");		
 		}
@@ -243,8 +241,6 @@
 		* Méthode permettant d'afficher le détail d'un article
 		*/
 		public function read(){
-			$arrErrors = array();
-			
 			// Numéro de l'article à afficher
 			$intArticleId	= $_GET['id']??0;
 
@@ -262,14 +258,13 @@
 				$objArticle->setComment($_POST['comment']);
 				
 				if(!$objArticle->getValid() && $objArticle->getComment() == ''){
-					$arrErrors['comment'] = "Le commentaire est obligatoire quand la validation de l'article est refusée";
+					$this->_arrErrors['comment'] = "Le commentaire est obligatoire quand la validation de l'article est refusée";
 				}else{
 					$objArticleModel->moderate($objArticle);
 				}
 			}
 
 			$this->_arrData["objArticle"] 	= $objArticle;
-			$this->_arrData["arrErrors"] 	= $arrErrors;
 
 			$this->_arrData["strPage"] 	= "read";
 			$this->_arrData["strTitle"] = "Détail d'un article";

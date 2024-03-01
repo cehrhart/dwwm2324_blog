@@ -1,13 +1,7 @@
 {extends file="views/layout.tpl"}
 
 {block name="contenu"}
-	{if (count($arrErrors) >0) }
-		<div class="alert alert-danger">
-		{foreach from=$arrErrors item=strError}
-			<p>{$strError}</p>
-		{/foreach}
-		</div>
-	{/if}		
+
 	<form action="{$base_url}user/login" method="post" >
 		<input type="hidden" name="csrf" value="{$csrf}">
 		<p>
